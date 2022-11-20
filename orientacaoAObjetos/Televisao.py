@@ -4,11 +4,16 @@ class Televisao:
     status = 'Desligada'
     volume = None
     canal = None
-    def __init__(self, polegadas, marca, volume, canal):
+    canalMinimo = None
+    canalMaximo = None
+    wifi = 'Desligado'
+    def __init__(self, polegadas, marca, volume, canal, canalMinimo, canalMaximo):
         self.polegadas = polegadas
         self.marca = marca
         self.volume = volume
         self.canal = canal
+        self.canalMinimo = canalMinimo
+        self.canalMaximo = canalMaximo
 
     def ligar(self):
         if self.status == 'Desligada':
@@ -29,13 +34,14 @@ class Televisao:
         print("Status: {}".format(self.status))
         print("Canal: {}".format(self.canal))
         print("Volume: {}".format(self.volume))
-        print("Polegadas: {}\n".format(self.polegadas))
+        print("Polegadas: {}".format(self.polegadas))
+        print("Wifi: {}\n".format(self.wifi))
 
 
     def mudarCanal(self, canal):
         if self.status == 'Desligada':
             print("\nTelevisao desligada!\n")
-        elif canal >= 1 and canal <= 100:
+        elif canal >= self.canalMinimo and canal <= self.canalMaximo:
             self.canal = canal
             print("\nCanal: {}\n".format(canal))
             
@@ -52,9 +58,46 @@ class Televisao:
         else: 
             print("\nVolume inexistente\n")
 
+    def volumeCima(self):
+        if self.status != "Desligada":
+            if self.volume == 100:
+                self.volume = 0
+                self.getVolume()
+            else: 
+                self.volume += 1
+                self.getVolume()
+        else:
+            print("\nTelevisao Desligada\n")
+
+    def volumeBaixo(self):
+        if self.status != "Desligada":
+            if self.volume == 0:
+                self.volume = 100
+                self.getVolume()
+            else:
+                self.volume -= 1
+                self.getVolume()
+        else:
+            print("\nTelevisao Desligada\n")
+    
+    def getVolume(self):
+        print("oi")
+        print("\nVolume: {}\n".format(self.volume))
+
+    def conectarWifi(self):
+        if self.status == 'Ligada':
+            if self.wifi == 'Desligado':
+                self.wifi = 'Ligado'
+            else:
+                self.wifi = 'Desligado'
+            print("\nStatus do Wifi: {}\n".format(self.wifi))
+        else:
+            print("\nTelevisao Desligada!\n")
+        
+
 onOff = True
-tv1 = Televisao(50, 'Sansung', '1', 20)
-tv2 = Televisao(50, 'LG', '1', 20)
+tv1 = Televisao(50, 'Samsung', 1, 20, 0, 200)
+tv2 = Televisao(50, 'LG', 1, 20, 0, 300)
 
 def menuTv(tv):
     onOff = True
@@ -65,7 +108,11 @@ def menuTv(tv):
             print("3 - Mudar Canal")
             print("4 - Mudar Volume")
             print("5 - Status")
-            print("6 - voltar")
+            print("6 - Voltar")
+            print("--")
+            print("7 - Para +1 volume")
+            print("8 - Para -1 Volume")
+            print("9 - Conectar/Desconectar do WIFI")
             choice = int(input("Opcao numero: "))
 
             if choice == 1:
@@ -73,7 +120,7 @@ def menuTv(tv):
             elif choice == 2:
                 tv.desligar()
             elif choice == 3:
-                chosen = int(input("Digite o canal que queres colocar (1-100): "))
+                chosen = int(input("Digite o canal que queres colocar ({}-{}): ".format(tv.canalMinimo, tv.canalMaximo)))
                 tv.mudarCanal(chosen)
             elif choice == 4:
                 chosen = int(input("Digite o volume desejado (0-100): "))
@@ -82,6 +129,12 @@ def menuTv(tv):
                 tv.getStatus()
             elif choice == 6:
                 onOff = False
+            elif choice == 7:
+                tv.volumeCima()
+            elif choice == 8:
+                tv.volumeBaixo()
+            elif choice == 9:
+                tv.conectarWifi()
             else:
                 print("Opcao invalida!")
 
